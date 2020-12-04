@@ -6,6 +6,10 @@ class Adventskalender:
     ANNA_2020: "Anna_2020"
     TEST: "test"
 
-class users:
+class Users:
     ID: "id"
     CHAT_ID: "chatId"
+    REQUESTED_CALENDER: "requestedCalendar"
+    NAME: "name"
+    HISTORY: "history"
+    ACCESSTRIES: "accesstries"
