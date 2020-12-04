@@ -1,15 +1,15 @@
 class Collections:
-    USERS: "users"
-    ADVENTSKALENDER: "Adventskalender"
+    USERS = "users"
+    ADVENTSKALENDER = "Adventskalender"
 
 class Adventskalender:
-    ANNA_2020: "Anna_2020"
-    TEST: "test"
+    ANNA_2020 = "Anna_2020"
+    TEST = "test"
 
 class Users:
-    ID: "id"
-    CHAT_ID: "chatId"
-    REQUESTED_CALENDER: "requestedCalendar"
-    NAME: "name"
-    HISTORY: "history"
-    ACCESSTRIES: "accesstries"
+    ID = "id"
+    CHAT_ID = "chatId"
+    REQUESTED_CALENDER = "requestedCalendar"
+    NAME = "name"
+    HISTORY = "history"
+    ACCESSTRIES = "accesstries"

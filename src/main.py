@@ -2,14 +2,15 @@ import requests
 import datetime
 from time import sleep
 import os
+import munch
 
 import pymongo
 from dotenv import load_dotenv
 
 from bothandler import BotHandler
-from interact.register_user import Register
+from messageHandler.message_handler import MessageHandler
 
-from enums.dbapi import Collections, Adventskalender, Users
+from enums.dbapi import Users, Collections, Adventskalender
 from enums.teleapi import Update
 from enums.messages import Messages
 
@@ -17,7 +18,7 @@ load_dotenv()
 
 token = os.environ.get('TELEGRAM-TOKEN')
 bot = BotHandler(token)
-db = pymongo.MongoClient(os.environ.get("MONGO-LINK"))["Adventskalender"]
+db = pymongo.MongoClient(os.environ.get("MONGO-LINK")).Adventskalender
 
 
 def main():
@@ -30,16 +31,18 @@ def main():
 
         if len(all_updates) > 0:
             for current_update in all_updates:
-                current_chat_id = current_update["message"]["chat"]["id"]
-                current_user = db[Collections.USERS].find_one({Users.CHAT_ID: current_chat_id})
-                current_text = current_update["message"]["chat"]["id"]
-                current_date = current_update[Update.MESSAGE][Update.DATE]
+                update = munch.munchify(current_update)
+                print("update text: ", update.message.text)
+                current_chat_id = update.message.chat.id
+                current_user = db.users.find_one({"chatId": current_chat_id})
+                # current_text = current_update["message"]["chat"]["id"]
+                # current_date = current_update[Update.MESSAGE][Update.DATE]
 
-                chat_bot = Register(current_chat_id, bot, db)
+                message_handler = MessageHandler(current_chat_id, bot, db)
 
                 print(current_update)
                 if "chat" in current_update["message"]:
-                    new_offset = current_update["update_id"]
+                    new_offset = update.update_id
                     print(new_offset)
                     # check if chatId is known in database
                     if db[Collections.USERS].find_one({Users.CHAT_ID: current_chat_id}):
@@ -52,7 +55,8 @@ def main():
                             #if failed db erweitern um passcodeversuch
                             
                     else:
-                        chat_bot.welcome(current_update[Update.MESSAGE])
+                        print("unknown chat")
+                        message_handler.welcome(update.message)
         sleep(2)
 
 

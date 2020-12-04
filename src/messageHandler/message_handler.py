@@ -7,7 +7,7 @@ from enums.messages import Messages
 from enums.dbapi import Users
 from enums.teleapi import Update
 
-class Register:
+class MessageHandler:
     def __init__(self, chat_id, bot, db):
         self.chat_id = chat_id
         self.bot = bot
@@ -16,17 +16,18 @@ class Register:
     #registrates new user and creates a document in database for the new user
     def welcome(self, a_message):
         self.bot.send_message(self.chat_id, Messages.WELCOME)
-        self.db["chats"].insert_one({
+        result = self.db.users.insert_one({
             Users.CHAT_ID: self.chat_id,
-            Users.NAME: a_message[Update.CHAT][Update.FIRST_NAME],
+            Users.NAME: a_message.chat.first_name,
             Users.REQUESTED_CALENDER: False,
-            Users.HISTORY: [a_message[Update.CHAT][Update.TEXT]]
+            Users.HISTORY: [a_message.text]
             })
+        print(result)
 
     #registers the request for the collection
     def register_collection(self, requested_collection = ""):
         if self.db[requested_collection]:
-            self.db["chats"].update_one({"chatId": self.chat_id}, {"requestedCollection": requested_collection})
+            self.db.users.update_one({"chatId": self.chat_id}, {"requestedCollection": requested_collection})
             self.bot.send_message(self.chat_id, Messages.ASK_PASSCODE)
         else:
             self.bot.send_message(self.chat_id, Messages.NO_COLLECTION)
