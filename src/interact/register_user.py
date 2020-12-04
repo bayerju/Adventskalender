@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append('..')
 
-from enums.messages import Messages
+from enums.messages import Messages # pylint: disable=import-error
 
 class Register:
     def __init__(self, chat_id, bot, db):
@@ -15,6 +15,7 @@ class Register:
         self.bot.send_message(self.chat_id, Messages.WELCOME)
         self.db["chats"].insert_one({"chatId": self.chat_id})
 
+    #registers the request for the collection
     def register_collection(self, requested_collection = ""):
         if self.db[requested_collection]:
             self.db["chats"].update_one({"chatId": self.chat_id}, {"requestedCollection": requested_collection})

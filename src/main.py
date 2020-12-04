@@ -32,7 +32,7 @@ def main():
                 if "chat" in current_update["message"]:
                     new_offset = current_update["update_id"]
                     print(new_offset)
-                    if db["chats"].find_one({"chatId": current_update["message"]["chat"]["id"]}):
+                    if db["users"].find_one({"chatId": current_update["message"]["chat"]["id"]}):
                         print("known chat")
                     else:
                         chat_bot.welcome()
