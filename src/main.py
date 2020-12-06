@@ -2,7 +2,8 @@ import requests
 import datetime
 from time import sleep
 import os
-import munch
+import sys
+from munch import munchify
 
 import pymongo
 from dotenv import load_dotenv
@@ -22,20 +23,19 @@ db = pymongo.MongoClient(os.environ.get("MONGO-LINK")).Adventskalender
 
 
 def main():
-    new_offset = db.config.find_one({"name": "offset"})
+    new_offset = db.config.find_one({"name": "offset"})["offset"]
     print('now launching...')
 
     while True:
         all_updates = bot.get_updates(new_offset)
-        print("all updates", all_updates)
-        print("hallo")
+        print("all updates", all_updates, new_offset)
 
         if len(all_updates) > 0:
             for current_update in all_updates:
-                update = munch.munchify(current_update)
+                update = munchify(current_update)
                 print("update text: ", update.message.text)
-                current_chat_id = update.message.chat.id
-                current_user = db.users.find_one({"chatId": current_chat_id})
+                current_chat_id = munchify(update.message.chat.id)
+                current_user = munchify(db.users.find_one({"chatId": current_chat_id}))
                 # current_text = current_update["message"]["chat"]["id"]
                 # current_date = current_update[Update.MESSAGE][Update.DATE]
 
@@ -48,15 +48,18 @@ def main():
                     print(new_offset)
                     # check if chatId is known in database
                     if db.users.find_one({Users.CHAT_ID: current_chat_id}):
+                        message_handler.recieved_message(munchify(update.message), current_user)
                         bot.send_message(current_chat_id, update.message.text)
                         print("known chat")
                         #todo datenbank akrtualisieren
                         #todo add accesstries in if below
-                        if current_user[Users.REQUESTED_CALENDER]:
-                            print("hallo")
-                            #todo datenbank abfragen, welcher kalender requested wurde --> den passcode vom kalender mit der eingegebenen nachricht vergleichen.
-                            #if failed db erweitern um passcodeversuch
-                            
+                        # if not current_user.requestedCalendar and not current_user.calendar:
+                        #     print("todo or not")
+                        # if current_user[Users.REQUESTED_CALENDER]:
+                        #     print("hallo")
+                        #     #todo datenbank abfragen, welcher kalender requested wurde -- den passcode vom kalender mit der eingegebenen nachricht vergleichen.
+                        #     #if failed db erweitern um passcodeversuch
+                        
                     else:
                         print("unknown chat")
                         message_handler.welcome(update.message)
@@ -67,4 +70,4 @@ if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        exit()
+        sys.exit()

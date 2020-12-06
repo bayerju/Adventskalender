@@ -2,8 +2,8 @@ import requests
 
 class BotHandler:
     def __init__(self, token):
-            self.token = token
-            self.api_url = "https://api.telegram.org/bot{}/".format(token)
+        self.token = token
+        self.api_url = "https://api.telegram.org/bot{}/".format(token)
 
     #url = "https://api.telegram.org/bot<token>/"
 
@@ -15,7 +15,28 @@ class BotHandler:
         return result_json
 
     def send_message(self, chat_id, text, silent=False):
-        params = {'chat_id': chat_id, 'text': text, 'disable_notification': silent, 'parse_mode': 'HTML'}
+        """
+        sends a message and expects following arguments.
+
+        Parameters
+        ----------
+        chat_id : int
+            id of the chat the message is send to
+        text: str
+            text of the message
+        silent: bool, optional
+            disable notification
+
+        Returns
+        -------
+        None
+        """
+        params = {
+            'chat_id': chat_id,
+            'text': text,
+            'disable_notification': silent,
+             'parse_mode': 'HTML'
+            }
         method = 'sendMessage'
         resp = requests.post(self.api_url + method, params)
         return resp

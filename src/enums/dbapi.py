@@ -13,7 +13,9 @@ class Users:
     REQUESTED_CALENDER = "requestedCalendar"
     NAME = "name"
     HISTORY = "history"
-    ACCESSTRIES = "accesstries"
+    ACCESSTRIES = "accessTries"
+    CALENDAR = "calendar"
 
 class Config:
     OFFSET = "offset"
+    NAME = "name"
