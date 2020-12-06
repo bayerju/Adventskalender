@@ -1,6 +1,7 @@
 class Collections:
     USERS = "users"
     ADVENTSKALENDER = "Adventskalender"
+    CONFIG = "config"
 
 class Adventskalender:
     ANNA_2020 = "Anna_2020"
@@ -13,3 +14,6 @@ class Users:
     NAME = "name"
     HISTORY = "history"
     ACCESSTRIES = "accesstries"
+
+class Config:
+    OFFSET = "offset"
