@@ -23,21 +23,32 @@ class MessageHandler:
             Users.REQUESTED_CALENDER: False,
             Users.HISTORY: [a_message.text],
             Users.ACCESSTRIES: 0,
-            Users.CALENDAR: None
+            Users.CALENDAR: None,
+            Users.LAST_SENT_ADV_MESSAGE: None
             })
         print(result)
 
     #registers the request for the collection
     def register_collection(self, requested_collection = ""):
         if self.db[requested_collection]:
-            self.db.users.update_one({"chatId": self.chat_id}, { '$set': {Users.REQUESTED_CALENDER: requested_collection}})
+            self.db.users.update_one({
+                "chatId": self.chat_id},
+                { '$set': {Users.REQUESTED_CALENDER: requested_collection}
+                })
             self.bot.send_message(self.chat_id, Messages.ASK_PASSCODE)
         else:
             self.bot.send_message(self.chat_id, Messages.NO_COLLECTION)
 
     def check_pass_code(self, a_message, a_user):
         if a_message.text == self.find_key_in_calendars("name", a_user.requestedCalendar).passcode:
-            self.db.users.update_one({"chatId": self.chat_id}, {'$set': {"calendar": a_user.requestedCalendar}})
+            self.db.users.update_one({
+                "chatId": self.chat_id},
+                {'$set': {
+                    "calendar": a_user.requestedCalendar,
+                    Users.ACCESSTRIES: 0,
+                    Users.REQUESTED_CALENDER: None
+                    }
+                })
             self.bot.send_message(a_user.chatId, Messages.PASSCODE_ACCEPTED)
         else:
             self.db.users.update_one({Users.CHAT_ID: a_user.chatId}, {'$inc': {Users.ACCESSTRIES: 1}})
@@ -62,7 +73,9 @@ class MessageHandler:
             elif a_message.text == "cancel":
                 print("todo: implement cancel")
             else:       #check passcode
-                self.check_pass_code(a_message, a_user)                
+                self.check_pass_code(a_message, a_user)
+        elif a_message.text == "nochmal":
+            AdvCalendar.send_adv_message()
         else:
             self.bot.send_message(self.chat_id, "Du hast schon einen Kalender, das reicht erstmal :)")
             AdvCalendar(self.chat_id, self.bot, self.db).run()

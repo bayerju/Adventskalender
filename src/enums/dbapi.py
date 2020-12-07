@@ -15,6 +15,7 @@ class Users:
     HISTORY = "history"
     ACCESSTRIES = "accessTries"
     CALENDAR = "calendar"
+    LAST_SENT_ADV_MESSAGE = "lastSentAdvMessage"
 
 class Config:
     OFFSET = "offset"

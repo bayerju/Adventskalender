@@ -4,3 +4,4 @@ class Messages:
     PASSCODE_ACCEPTED = "dass passwort war korrekt! viel spaß mit dem kalender!"
     PASSCODE_DENIED = "das passwor war falsch, bitte versuche es nochmal"
     NO_COLLECTION = "Es gibt keinen Adventskalender mit diesem Namen"
+    

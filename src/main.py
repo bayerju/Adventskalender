@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 
 from bothandler import BotHandler
 from messageHandler.message_handler import MessageHandler
+from messageHandler.adv_calendar import AdvCalendar
 
 from enums.dbapi import Users, Collections, Adventskalender, Config
 from enums.teleapi import Update
@@ -27,6 +28,10 @@ def main():
     print('now launching...')
 
     while True:
+        # run adv calendar
+        for user_dict in db.users.find():
+            adv_cal = AdvCalendar(user_dict[Users.CHAT_ID], bot, db)
+            adv_cal.run()
         all_updates = bot.get_updates(new_offset)
         print("all updates", all_updates, new_offset)
 
@@ -47,10 +52,12 @@ def main():
                     db.config.find_one_and_update({"name": "offset"}, {'$set': {'offset': new_offset}})
                     print(new_offset)
                     # check if chatId is known in database
-                    if db.users.find_one({Users.CHAT_ID: current_chat_id}):
+                    user = munchify(db.users.find_one({Users.CHAT_ID: current_chat_id}))
+                    if user:
                         message_handler.recieved_message(munchify(update.message), current_user)
                         bot.send_message(current_chat_id, update.message.text)
                         print("known chat")
+                        
                         #todo datenbank akrtualisieren
                         #todo add accesstries in if below
                         # if not current_user.requestedCalendar and not current_user.calendar:
